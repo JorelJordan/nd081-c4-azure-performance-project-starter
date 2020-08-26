@@ -5,19 +5,35 @@ import redis
 import socket
 import sys
 import logging
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure import metrics_exporter
+from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.samplers import ProbabilitySampler
+from opencensus.trace.tracer import Tracer
+
 from datetime import datetime
+
 
 # App Insights
 # TODO: Import required libraries for App Insights
 
 # Logging
-logger = # TODO: Setup logger
+logger = logging.getLogger(__name__)
 
+logger.addHandler(AzureLogHandler(
+    connection_string='InstrumentationKey=7511ac65-d55f-463f-9dba-1a7475d23770')
+)
 # Metrics
-exporter = # TODO: Setup exporter
+exporter = metrics_exporter.new_metrics_exporter(
+    connection_string='InstrumentationKey=7511ac65-d55f-463f-9dba-1a7475d23770')
+
 
 # Tracing
-tracer = # TODO: Setup tracer
+tracer = Tracer(
+    exporter=AzureExporter(
+        connection_string='InstrumentationKey=7511ac65-d55f-463f-9dba-1a7475d23770'),
+    sampler=ProbabilitySampler(1.0),
+)
 
 app = Flask(__name__)
 
